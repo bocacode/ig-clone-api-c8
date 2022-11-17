@@ -1,3 +1,4 @@
+import { FieldValue } from "firebase-admin/firestore";
 import dbConnect from "./dbConnect.js";
 
 export async function getAllPhotos(req, res) {
@@ -14,4 +15,16 @@ export async function addNewPhoto(req, res) {
   await db.collection('photos').add(newPhoto)
     .catch(err => res.status(500).send(err));
   getAllPhotos(req, res);
+}
+
+export async function likePhoto(req, res) {
+  const { photoId } = req.params;
+  const db = dbConnect();
+  await db.collection('photos').doc(photoId)
+    .update({
+      likes: FieldValue.increment(1)
+    })
+    .catch(err => res.status(500).send(err));
+  getAllPhotos(req, res);
+
 }
